@@ -109,7 +109,7 @@ function startParsing() {
 }
 
 async function parsing() {
-    let auctionCount = 2;
+    let auctionCount = 1; // TEST TODO
     const promises = [];
     for (let i = 0; i < auctionCount; i++) {
         promises.push((async () => {
@@ -287,26 +287,26 @@ async function collectLotDataFromLink(link, windowId) {
                     console.log("Страница лота загружена:", link);
 
                     const handleLotData = function(message, sender) {
-                    if (sender.tab.id !== tabId) return;
+                        if (sender.tab.id !== tabId) return;
 
-                    if (message.action === "lot-data") {
-                        console.log("Получены данные лота:", message.data);
-                        const lotNumber = message.data.number;
-                        if (!dataJSON[lotNumber]) {
-                            dataJSON[lotNumber] = {};
+                        if (message.action === "lot-data") {
+                            console.log("Получены данные лота:", message.data);
+                            const lotNumber = message.data.number;
+                            if (!dataJSON[lotNumber]) {
+                                dataJSON[lotNumber] = {};
+                            }
+                            Object.assign(dataJSON[lotNumber], message.data);
+                            chrome.runtime.onMessage.removeListener(handleLotData);
+                            chrome.tabs.remove(tabId);
+                            resolve();
                         }
-                        Object.assign(dataJSON[lotNumber], message.data);
-                        chrome.runtime.onMessage.removeListener(handleLotData);
-                        chrome.tabs.remove(tabId);
-                        resolve();
-                    }
 
-                    if (message.action === "lot-data-error") {
-                        console.error("Ошибка сбора:", message.error);
-                        chrome.runtime.onMessage.removeListener(handleLotData);
-                        chrome.tabs.remove(tabId);
-                        resolve();
-                    }
+                        if (message.action === "lot-data-error") {
+                            console.error("Ошибка сбора:", message.error);
+                            chrome.runtime.onMessage.removeListener(handleLotData);
+                            chrome.tabs.remove(tabId);
+                            resolve();
+                        }
                     };
 
                     chrome.runtime.onMessage.addListener(handleLotData);
