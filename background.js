@@ -109,7 +109,7 @@ function startParsing() {
 }
 
 async function parsing() {
-    let auctionCount = 1; // TEST TODO
+    let auctionCount = 2; // TEST TODO
     const promises = [];
     for (let i = 0; i < auctionCount; i++) {
         promises.push((async () => {
