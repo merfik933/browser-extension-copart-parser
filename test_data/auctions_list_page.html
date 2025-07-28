@@ -1,0 +1,495 @@
+<html id="g2auc-auctions-html" lang="en">
+    <head>
+        <!-- Load jQuery here -->
+        <script async="" src="https://www.clarity.ms/s/0.8.19/clarity.js"></script><script type="text/javascript" async="" src="https://www.insightful-7-corporation.com/Track/Capture.aspx?retType=js&amp;trk_jshv=1&amp;trk_user=804165&amp;trk_sw=1440&amp;trk_sh=900&amp;trk_ref=&amp;trk_tit=Auction%20Dashboard&amp;trk_loc=https%3A%2F%2Fg2auction.copart.de%2Fg2%2F%23%2F&amp;trk_agn=Netscape&amp;trk_agv=Mozilla%2F5.0%20(Macintosh%3B%20Intel%20Mac%20OS%20X%2010_15_7)%20AppleWebKit%2F537.36%20(KHTML%2C%20like%20Gecko)%20Chrome%2F138.0.0.0%20Safari%2F537.36&amp;trk_dom=g2auction.copart.de&amp;trk_cookie=NA"></script><script src="https://connect.facebook.net/signals/config/755229991333034?v=2.9.215&amp;r=stable&amp;domain=g2auction.copart.de&amp;hme=3a8008a6f0cd88c861b1cd2bda7f70b9072223018277cd4c0254ee4884c65e05&amp;ex_m=83%2C141%2C124%2C17%2C117%2C58%2C39%2C118%2C64%2C57%2C129%2C72%2C12%2C82%2C25%2C112%2C103%2C62%2C65%2C111%2C128%2C91%2C131%2C7%2C3%2C4%2C6%2C5%2C2%2C73%2C81%2C132%2C203%2C153%2C52%2C208%2C205%2C206%2C44%2C166%2C24%2C61%2C212%2C211%2C155%2C27%2C51%2C8%2C54%2C77%2C78%2C79%2C84%2C107%2C26%2C23%2C110%2C106%2C105%2C125%2C63%2C127%2C49%2C126%2C40%2C108%2C50%2C100%2C11%2C36%2C194%2C196%2C163%2C20%2C21%2C22%2C14%2C15%2C35%2C32%2C33%2C68%2C74%2C76%2C89%2C116%2C119%2C37%2C90%2C18%2C16%2C94%2C59%2C30%2C121%2C120%2C122%2C113%2C19%2C29%2C48%2C88%2C28%2C176%2C149%2C86%2C109%2C67%2C98%2C43%2C38%2C96%2C97%2C102%2C47%2C13%2C104%2C95%2C55%2C42%2C45%2C0%2C80%2C130%2C1%2C101%2C10%2C99%2C252%2C192%2C139%2C179%2C172%2C9%2C46%2C75%2C53%2C123%2C56%2C93%2C71%2C70%2C41%2C114%2C69%2C66%2C60%2C92%2C85%2C34%2C115%2C31%2C87%2C133" async=""></script><script async="" src="https://connect.facebook.net/en_US/fbevents.js"></script><script type="text/javascript" async="" src="https://www.clarity.ms/tag/n57ozg4j7k?ref=gtm"></script><script type="text/javascript" async="" src="https://www.googletagmanager.com/gtag/js?id=G-56NBNM4PWX&amp;l=copart_dataLayer&amp;cx=c&amp;gtm=45He57e1h1v859036753za200&amp;tag_exp=101509157~103116026~103200004~103233427~103351869~103351871~104684208~104684211~104732253~104732255~104908321~104908323"></script><script plugin="googletagmanager" async="true" src="https://www.googletagmanager.com/gtm.js?id=GTM-WM7TTZ4&amp;l=copart_dataLayer"></script><script src="lib/jquery/jquery-3.1.1.min.js"></script>
+        <meta charset="UTF-8">
+        <script type="text/javascript">
+            window.g2AucPermittedOriginsReceived = false;
+            window.g2AucEventsQueue = [];
+            window.g2AucPermittedOrigins = [];
+            window.parentTargetOriginForPostMessage = null;
+            function handleAnyExistingEventsAndReschedule() {
+                if(g2AucEventsQueue.length === 0) {
+                    return;
+                }
+                if(!window.g2AucPermittedOriginsReceived) {
+                    setTimeout(() => handleAnyExistingEventsAndReschedule(), 100);
+                    return;
+                }
+                const count = Math.min(10, g2AucEventsQueue.length);
+                for(let i=0; i<=count; ++i) {
+                    let event = g2AucEventsQueue.pop();
+                    if(event) {
+                        processEvent(event);
+                    }
+                }
+                if(g2AucEventsQueue.length > 0) {
+                    setTimeout(() => handleAnyExistingEventsAndReschedule(), 100);
+                }
+            }
+            function bootstrap()
+            {
+                // Load permitted origins
+                fetch(location.origin + '/g2/api/v1/permitted-origins')
+                    .then(response => response.text()
+                            .then(
+                                data => {
+                                    console.log('text origins', data);
+                                    window.g2AucPermittedOriginsReceived = true;
+                                    if(!!data) {
+                                        window.g2AucPermittedOrigins = data.split(",");
+                                        handleAnyExistingEventsAndReschedule();
+                                    }
+                                },
+                                () => {
+                                    console.log('failed to parse text origins');
+                                    window.g2AucPermittedOriginsReceived = true;
+                                }),
+                        () => {console.log('failed to get origins'); window.g2AucPermittedOriginsReceived = true;});
+            }
+            bootstrap();
+            // Process a queued or received event
+            function processEvent(event) {
+                const origin = event.origin;
+                if(!origin || !origin.includes || !window.g2AucPermittedOrigins.includes(origin)) {
+                    return;
+                }
+                try {
+                    const jsonData = JSON.parse(event.data);
+                    const licType = jsonData['mbrLicenseType'];
+                    const membershipOption = jsonData['membershipOption'];
+                    const parentOrigin = jsonData['origin'];
+                    if(!!licType)
+                        sessionStorage.setItem('licenseType', licType);
+                    if(!!membershipOption)
+                        sessionStorage.setItem('membershipOption', membershipOption);
+                    if(!!parentOrigin)
+                        window.parentTargetOriginForPostMessage = parentOrigin;
+                } catch (e) {
+                    console.warn("Exception parsing event", event, e);
+                }
+            }
+            // Handle messages posted by iFrame's parent to convey pieces of information
+            function paramsMessagesHandler(event) {
+                if(!event || !event.data) {
+                    return;
+                }
+                console.log("Received event", event);
+                if(!window.g2AucPermittedOriginsReceived || window.g2AucEventsQueue.length > 0) {
+                    console.log('Queuing event');
+                    window.g2AucEventsQueue.push(event);
+                    handleAnyExistingEventsAndReschedule();
+                    return;
+                }
+                processEvent(event);
+            }
+            window.addEventListener("message", paramsMessagesHandler);
+        </script>
+
+        <script>
+            $(function() {
+                //  Register the service worker to force requests not to send Range header
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.register('sw.js?t='+new Date().getTime(), { scope: '/' }).then(function(registration) {
+                        console.log('Service worker registered with scope: ', registration.scope);
+                    }, function(err) {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+                }
+
+                //  Set params in window object
+                var sPageURL = decodeURIComponent(window.location.search.substring(1)), //  Exclude the '?' symbol at location 0
+                sURLVariables = sPageURL.split('&');
+                for (i = 0; i < sURLVariables.length; i++) {
+                    sParameterName = sURLVariables[i].split('=');
+                    window["G2_AUC_" + sParameterName[0]] = sParameterName[1];
+                }
+
+                //  Set the hash
+                window["G2_AUC_hash"] = window.location.hash.substring(1);
+
+                //  Setup webapp content without cache
+                $.ajax({
+                    url: location.origin + "/g2/#/",
+                    cache: false,
+                    dataType: "html",
+                    success: function(data, textStatus, request) {
+                        $("#iAuction5-internal").html(data);
+                        $("#serverName").html(request.getResponseHeader('serverName'));
+                    }
+                });
+            });
+        </script>
+    <style></style><style type="text/css">.widget-dr .btn-primary{background-color:#f0f!important;border-color:#f0f!important}a,button,ngx-item:hover{cursor:pointer}@media screen and (-ms-high-contrast:active),screen and (-ms-high-contrast:none){gridster#gridsterComp{overflow:visible!important}}.widget-header{font-size:13px;height:30px;line-height:30px;display:inline-block;width:100%}.micro-widget .widget-header,.widget-header{cursor:move;font-weight:700;margin:0;padding:0;white-space:nowrap;background:#1d5ab9;color:#fff;vertical-align:middle;border-radius:5px 5px 0 0;-moz-border-radius:5px 5px 0 0;-webkit-border-radius:5px 5px 0 0;border:0 solid #000;clear:both}.micro-widget .widget-header{font-size:12px;height:auto;line-height:24px;display:block}.widget-MOBILE .widget-header{border-radius:0!important}.default{background:#1d5ab9!important}.image-carousal{color:#fff;background-color:#005abb;padding:0 8px;height:30px;line-height:30px;font-size:12px;vertical-align:middle;border-top-right-radius:5px}.image-modal{color:#fff;background-color:#1d5ab9;padding:8px}.btn-primary{color:#fff;background-color:#025aa5}th.ui-state-default{background-color:#005abb!important;color:#fff!important}.toggle-style-class.ui-state-highlight,.toggle-style-class.ui-togglebutton.ui-button{color:#fff!important;background-color:#005abb!important;border-color:#005abb!important}.custom-header{background-color:#1d5ab9!important;color:#fff!important;font-weight:700;padding:8px;text-align:left;border-radius:4px 4px 0 0}.custom-modal-buttons{color:#fff;cursor:pointer;background-color:#005abb;font-size:13px;font-weight:500}.custom-btn{font-size:12px!important;white-space:inherit!important;cursor:pointer!important;padding:3px!important;background-color:#0d5db8!important;color:#fff!important}</style><style>.ui-dialog[_ngcontent-c2]   .ui-widget[_ngcontent-c2]   .ui-dialog-titlebar[_ngcontent-c2]{padding:0 0!important}.ui-dialog[_ngcontent-c2]   .ui-dialog-titlebar[_ngcontent-c2]{padding:0 0!important;position:relative;border:0}.overlay_fix[_ngcontent-c2]{width:100%;height:100%;position:absolute;top:0;left:0;z-index:999}.modalHeading[_ngcontent-c2]{background-color:#165fb5!important;color:#fff}.modalHeading[_ngcontent-c2]   .ui-dialog[_ngcontent-c2]   .ui-dialog-content[_ngcontent-c2]{padding:0;margin:20px 10px}.modalHeading[_ngcontent-c2]   .ui-dialog-titlebar[_ngcontent-c2]   .ui-dialog-header[_ngcontent-c2]{background-color:#165fb5;color:#fff;box-shadow:none}.nav-option-on[_ngcontent-c2]{color:#165fb5;cursor:pointer;-webkit-touch-callout:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}</style><style>[_nghost-c4] {   position: relative;   display: flex;   overflow: auto;   flex: 1 auto;   background: grey;   width: 100%;   height: 100%; }  .fit[_nghost-c4] {   overflow-x: hidden;   overflow-y: hidden; }  .scrollVertical[_nghost-c4] {   overflow-x: hidden;   overflow-y: auto; }  .scrollHorizontal[_nghost-c4] {   overflow-x: auto;   overflow-y: hidden; }  .fixed[_nghost-c4] {   overflow: auto; }  .mobile[_nghost-c4] {   overflow-x: hidden;   overflow-y: auto;   display: block; }  .mobile[_nghost-c4]     gridster-item {   position: relative; }</style><style>.cancel-button[_ngcontent-c12]{background:transparent;border-color:#0d5db8;color:#0d5db8}.register-button[_ngcontent-c12]{background:#019832;border-color:#019832;margin-right:4px}.register-button[_ngcontent-c12]:hover{background:#00531b;border-color:#00531b}.sign-in-button[_ngcontent-c12]{margin-left:4px}</style><style>[_nghost-c13] {   display: none;   position: absolute; }  .rows[_ngcontent-c13], .columns[_ngcontent-c13] {   position: absolute; }  .columns[_ngcontent-c13] {   display: flex;   flex-direction: row; }  .column[_ngcontent-c13], .row[_ngcontent-c13] {   transition: .3s;   box-sizing: border-box; }  .column[_ngcontent-c13] {   height: 100%;   border-left: 1px solid white;   border-right: 1px solid white; }  .row[_ngcontent-c13] {   width: 100%;   border-top: 1px solid white;   border-bottom: 1px solid white; }</style><style>[_nghost-c14] {   background: rgba(0, 0, 0, 0.15);   position: absolute; }</style><style>[_nghost-c5] {   -webkit-user-select: none;   -moz-user-select: none;   -ms-user-select: none;   user-select: none;   box-sizing: border-box;   z-index: 1;   position: absolute;   overflow: hidden;   transition: .3s;   display: none;   background: white; }  .gridster-item-moving[_nghost-c5] {   cursor: move; }  .gridster-item-resizing[_nghost-c5], .gridster-item-moving[_nghost-c5] {   transition: 0s;   z-index: 2;   box-shadow: 0 0 5px 5px rgba(0, 0, 0, .2), 0 6px 10px 0 rgba(0, 0, 0, .14), 0 1px 18px 0 rgba(0, 0, 0, .12); }  .gridster-item-resizable-handler[_ngcontent-c5] {   position: absolute;   z-index: 2; }  .gridster-item-resizable-handler.handle-n[_ngcontent-c5] {   cursor: n-resize;   height: 10px;   right: 0;   top: 0;   left: 0; }  .gridster-item-resizable-handler.handle-e[_ngcontent-c5] {   cursor: e-resize;   width: 10px;   bottom: 0;   right: 0;   top: 0; }  .gridster-item-resizable-handler.handle-s[_ngcontent-c5] {   cursor: s-resize;   height: 10px;   right: 0;   bottom: 0;   left: 0; }  .gridster-item-resizable-handler.handle-w[_ngcontent-c5] {   cursor: w-resize;   width: 10px;   left: 0;   top: 0;   bottom: 0; }  .gridster-item-resizable-handler.handle-ne[_ngcontent-c5] {   cursor: ne-resize;   width: 10px;   height: 10px;   right: 0;   top: 0; }  .gridster-item-resizable-handler.handle-nw[_ngcontent-c5] {   cursor: nw-resize;   width: 10px;   height: 10px;   left: 0;   top: 0; }  .gridster-item-resizable-handler.handle-se[_ngcontent-c5] {   cursor: se-resize;   width: 0;   height: 0;   right: 0;   bottom: 0;   border-style: solid;   border-width: 0 0 10px 10px;   border-color: transparent; }  .gridster-item-resizable-handler.handle-sw[_ngcontent-c5] {   cursor: sw-resize;   width: 10px;   height: 10px;   left: 0;   bottom: 0; }  [_nghost-c5]     .gridster-item-content {   -webkit-user-select: auto;   -moz-user-select: auto;   -ms-user-select: auto;   user-select: auto; }  [_nghost-c5]:hover   .gridster-item-resizable-handler.handle-se[_ngcontent-c5] {   border-color: transparent transparent #ccc }</style><style>.widget[_ngcontent-c6]{display:inline-block;float:left;margin-bottom:5px;color:#2f3942}.sale-end[_ngcontent-c6]{position:relative;top:30%;left:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%)}.future-watchlist-div[_ngcontent-c6]{margin:0!important;position:relative;top:2px;left:2px;z-index:2!important}.watching[_ngcontent-c6]{outline:none;padding:2px 4px;background:#0d5db8;color:#fff}.watching[_ngcontent-c6]   .fa[_ngcontent-c6]{color:#f5d130}.watching[_ngcontent-c6]   span[_ngcontent-c6]{padding-left:4px}.widget-body[_ngcontent-c6]{font-size:11px;border:1px solid #999;width:100%}.widget-MACRO[_ngcontent-c6]{width:600px!important;height:500px!important;min-width:600px!important}.widget-MEGA[_ngcontent-c6]{width:100%;height:500px;min-width:1591px}.widget-mega-SMALL[_ngcontent-c6]{min-width:1400px!important}.widget-MICRO[_ngcontent-c6]{width:300px!important;height:300px!important;min-width:300px!important}.widget-body-MACRO[_ngcontent-c6], .widget-body-MEGA[_ngcontent-c6]{height:470px!important}.widget-body-MICRO[_ngcontent-c6]{height:348px!important}.widget-body-MOBILE[_ngcontent-c6]{height:470px!important}.future-lot-list-area-MICRO[_ngcontent-c6]{display:none}.lot-top-area-MACRO[_ngcontent-c6]{-webkit-box-flex:0;-ms-flex:0 0 66.666667%;flex:0 0 66.666667%;max-width:66.666667%}.lot-top-area-MEGA[_ngcontent-c6], .lot-top-area-MICRO[_ngcontent-c6]{-webkit-box-flex:0;-ms-flex:0 0 100%;flex:0 0 100%;max-width:100%}.right-top-area-MACRO[_ngcontent-c6]{bottom:109px!important;-ms-flex:0 0 33.333333%!important;flex:0 0 33.333333%!important;max-width:33.333333%!important}.right-top-area-MACRO[_ngcontent-c6], .right-top-area-MEGA[_ngcontent-c6]{position:relative!important;-webkit-box-flex:0}.right-top-area-MEGA[_ngcontent-c6]{-ms-flex:0 0 40%!important;flex:0 0 40%!important;max-width:40%!important;min-width:159px}.right-top-area-MICRO[_ngcontent-c6]{-webkit-box-flex:0;-ms-flex:0 0 41.66666667%!important;flex:0 0 41.66666667%!important;max-width:41.66666667%!important;position:relative;border-left:1px solid #999;border-top:1px solid #999}.left-top-area-MACRO[_ngcontent-c6]{-webkit-box-flex:0;-ms-flex:0 0 66.666667%;flex:0 0 66.666667%;max-width:66.666667%}.left-top-area-MEGA[_ngcontent-c6]{-webkit-box-flex:0;-ms-flex:0 0 60%;flex:0 0 60;max-width:60%}.left-top-area-MICRO[_ngcontent-c6]{-webkit-box-flex:0;-ms-flex:0 0 58.33333333%;flex:0 0 58.33333333%;max-width:58.33333333%;height:229px!important;border-top:1px solid #999}.lot-details-wrapper-MACRO[_ngcontent-c6]{height:185px!important}.lot-details-wrapper-MEGA[_ngcontent-c6]{width:100%!important;height:387px!important;position:absolute;bottom:0;border-top:1px solid #999}.lot-details-wrapper-MICRO[_ngcontent-c6]{height:185px!important}.lot-details-secondary-MICRO[_ngcontent-c6], .widget-MACRO[_ngcontent-c6]   .previous-bids-MICRO[_ngcontent-c6], .widget-MEGA[_ngcontent-c6]   .previous-bids-MICRO[_ngcontent-c6], .widget-MICRO[_ngcontent-c6]   .previous-bids-MACRO[_ngcontent-c6], .widget-MOBILE[_ngcontent-c6]   .previous-bids-MICRO[_ngcontent-c6]{display:none}.lot-details-secondary-MACRO[_ngcontent-c6]{height:100%;-webkit-box-flex:0;-ms-flex:0 0 50%;flex:0 0 50%;max-width:50%;line-height:21px;position:relative}.lot-details-primary-MICRO[_ngcontent-c6]{display:none}.lot-details-combined-MICRO[_ngcontent-c6]{line-height:19px;height:180px}.lot-details-combined-MEGA[_ngcontent-c6], .lot-details-combined-MICRO[_ngcontent-c6]{-webkit-box-flex:0;-ms-flex:0 0 100%;flex:0 0 100%;max-width:100%}.lot-details-combined-MEGA[_ngcontent-c6]{line-height:22px;height:387px!important;font-size:12px}.lot-details-combined-MACRO[_ngcontent-c6]{display:none}.futureLot-combined-details-MICRO[_ngcontent-c6]{height:180px!important}.futureLot-combined-details-MEGA[_ngcontent-c6]{height:434px!important}.lot-details-primary-MACRO[_ngcontent-c6]{-webkit-box-flex:0;-ms-flex:0 0 50%;flex:0 0 50%;max-width:50%;line-height:21px;border-left:1px solid #999;height:100%}.expanded-images-MEGA[_ngcontent-c6], .expanded-images-MICRO[_ngcontent-c6]{display:none!important}.previous-bids-MICRO[_ngcontent-c6]{width:100%;height:25px}.auctionrun[_ngcontent-c6]{background-color:#f7f7f7;border-top:1px solid #999}.widget-MICRO[_ngcontent-c6]   .auctionrun[_ngcontent-c6]{height:224px}.widget-body-MACRO[_ngcontent-c6]   .auctionrun[_ngcontent-c6]{height:294px}.widget-body-MEGA[_ngcontent-c6]   .auctionrun[_ngcontent-c6]{height:387px}.widget-MACRO[_ngcontent-c6]   .loadingdiv[_ngcontent-c6], .widget-MEGA[_ngcontent-c6]   .loadingdiv[_ngcontent-c6]{left:300px}.widget-body-MICRO[_ngcontent-c6]   .loadingdiv[_ngcontent-c6], .widget-MACRO[_ngcontent-c6]   .loadingdiv[_ngcontent-c6], .widget-MEGA[_ngcontent-c6]   .loadingdiv[_ngcontent-c6]{top:50%;display:block;position:absolute;text-align:center!important;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%)}.widget-body-MICRO[_ngcontent-c6]   .loadingdiv[_ngcontent-c6]{left:50%}.absolute-center[_ngcontent-c6]{left:50%;top:50%;position:absolute;text-align:center!important;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%)}.custom-modal-content-MICRO[_ngcontent-c6]{height:45%!important;width:80%!important}.custom-modal-content-MICRO[_ngcontent-c6]   .custom-modal-body[_ngcontent-c6]{font-size:14px;text-align:left;padding:8px}.custom-modal-content-MOBILE[_ngcontent-c6]{height:38%!important;width:80%!important}.custom-modal-content-MOBILE[_ngcontent-c6]   .custom-modal-body[_ngcontent-c6]{font-size:14px;text-align:left;padding:8px}.custom-modal-body[_ngcontent-c6]{font-size:16px;text-align:left;padding:8px}.custom-modal-content[_ngcontent-c6]{height:38%;width:50%;max-width:300px;border:1px solid #ccc;background:#fff;z-index:10;border-radius:4px}.custom-modal-button-container[_ngcontent-c6]{position:absolute;padding:8px;bottom:0;right:0}.custom-modal[_ngcontent-c6]{position:absolute;left:0;top:0;border-radius:8px;width:100%;height:100%;background:#000;opacity:.5;z-index:9}.future-lot-list-area-MOBILE[_ngcontent-c6], .lot-details-primary-MOBILE[_ngcontent-c6], .lot-details-secondary-MOBILE[_ngcontent-c6]{display:none}.future-lot-list-area-MEGA[_ngcontent-c6]{float:left;width:35%;height:468px;border-right:1px solid #999}.lot-top-area-MOBILE[_ngcontent-c6]{width:100%!important}.auction-wrapper-MICRO[_ngcontent-c6]{height:308px!important}.auction-wrapper-MACRO[_ngcontent-c6]{height:293px!important}.auction-wrapper-MEGA[_ngcontent-c6]{height:468px!important;width:35%;float:left}.lot-details-combined-MOBILE[_ngcontent-c6]{width:100%!important;height:309px!important}.left-top-area-MOBILE[_ngcontent-c6]   .displayMicroImages-true[_ngcontent-c6]   .futureLotFlag-true[_ngcontent-c6], .right-top-area-MOBILE[_ngcontent-c6]   .displayMicroImages-true[_ngcontent-c6]   .futureLotFlag-true[_ngcontent-c6]{top:60px;height:50%}.widget-MOBILE[_ngcontent-c6]{position:absolute;top:0;width:100%}.right-top-area-MOBILE[_ngcontent-c6]{-webkit-box-flex:0;-ms-flex:0 0 50%!important;flex:0 0 50%!important;max-width:50%!important;position:relative;border-left:1px solid #999}.left-top-area-MOBILE[_ngcontent-c6]{-webkit-box-flex:0;-ms-flex:0 0 50%;flex:0 0 50%;max-width:50%;border-top:1px solid #999}.widget-MOBILE[_ngcontent-c6]   .loadingdiv[_ngcontent-c6]{text-align:center;position:relative;top:30px;height:300px}.widget-leave-auction[_ngcontent-c6]{line-height:1.42857143;font-size:.8em;display:block;font-family:Open Sans,Arial,Helvetica,sans-serif}.upcomingLotsMicro[_ngcontent-c6]{width:100%;font-weight:700;font-size:10px;color:#0274d8;text-align:center;border:1px #000;background-color:#f7f7f7;cursor:pointer;z-index:1}.upcomingLotsDisabled[_ngcontent-c6]{color:#f7f7f7;cursor:default}@media screen and (max-width:360px){#watchListButton[_ngcontent-c6]{font-size:9px!important;padding:5px!important}}.lotdescBlack[_ngcontent-c6]{background-color:#000!important;color:#fff!important}.neon[_ngcontent-c6]{font-family:Museo;letter-spacing:-1px;font-size:19px;text-align:center;text-transform:uppercase;color:#fff;text-shadow:0 0 10px #fff,0 0 20px #fff,0 0 30px #fff,0 0 10px #ff00de,0 0 17px #ff00de,0 0 20px #ff00de,0 0 25px #ff00de,0 0 40px #ff00de}.sellerMessage[_ngcontent-c6]{position:absolute;top:0;right:0;left:0;z-index:100001;background-color:#000;background:#000}.lot-details-combined-MICRO[_ngcontent-c6]   .txtvalue-expanded[_ngcontent-c6]{margin-top:-19px}.widget-list-MEGA[_ngcontent-c6]{width:600px!important;min-width:600px!important}</style><style>.widgetheader-center[_ngcontent-c34], .widgetheader-left[_ngcontent-c34], .widgetheader-right[_ngcontent-c34]{display:inline-block}.widgetheader-left[_ngcontent-c34]{float:left;width:17%}.widgetheader-center[_ngcontent-c34]{width:45%}.widgetheader-right[_ngcontent-c34]{text-align:right;width:30%;float:right;display:contents}.micro-widget[_ngcontent-c34]   .material-icons.navigate-before[_ngcontent-c34]{margin:0;font-size:35px;padding-top:5px}.micro-widget[_ngcontent-c34]   .header-left-title[_ngcontent-c34]{line-height:15px}.header-resize.fa-expand[_ngcontent-c34]{font-size:22px;line-height:26px;vertical-align:middle;margin:0 10px 0 10px}.view-header-title[_ngcontent-c34]{font-size:1.1em;padding-left:6px}.view-header-icon-close[_ngcontent-c34], .view-header-icon-close[_ngcontent-c34]:hover{float:right;font-size:22px;margin:2px;padding:1px;color:#eee;cursor:pointer;padding-right:2px}</style><style>.view-auction-list-header[_ngcontent-c35]{table-layout:fixed;border-collapse:collapse;font-size:.9em;font-weight:700;width:100%}.view-auction-list-header[_ngcontent-c35]   tr[_ngcontent-c35]{border-top:1px solid #888;border-bottom:1px solid #444;background:#888;color:#fff}.view-auction-list-header[_ngcontent-c35]   td[_ngcontent-c35] > div[_ngcontent-c35]{padding:0 2px 0 2px}.tooltip-icon[_ngcontent-c35]{display:inline-block;width:12px;height:12px;border-radius:7px;line-height:12px;text-align:left;padding-top:1px;padding-left:3px;font-size:.9em;font-family:arial;font-weight:700;background:#fff;color:gray;cursor:pointer}</style><style>.view-auction-list-tooltip[_ngcontent-c36]{width:300px;font-family:Open Sans,Arial,Helvetica,sans-serif}.table[_ngcontent-c36]   td[_ngcontent-c36]{padding:5px}.table[_ngcontent-c36]{font-size:11px}.toolTipContentTableBody[_ngcontent-c36]   tr[_ngcontent-c36]{border-top:1px solid gray}.toolTipContentTableHeader[_ngcontent-c36]{border-top:1px solid gray;font-weight:700}.tooltip-icon[_ngcontent-c36]{display:inline-block;width:13px;height:13px;border-radius:7px;line-height:12px;text-align:left;padding-top:1px;padding-left:4px;font-size:.9em;font-family:arial;font-weight:700;background:#fff;color:gray;cursor:pointer}</style><style>.view-auction-list-body[_ngcontent-c37]{position:relative;overflow-y:auto;overflow-x:hidden;display:block}.MACRO[_ngcontent-c37], .MEGA[_ngcontent-c37]{height:445px}.MICRO[_ngcontent-c37]{height:250px}.arAuctiontable[_ngcontent-c37]{table-layout:fixed;border-collapse:collapse;font-size:.95em;width:100%}.view-auction-list-body[_ngcontent-c37]   td[_ngcontent-c37] > div[_ngcontent-c37]{padding:0 2px 0 2px}.view-auction-list-title[_ngcontent-c37]{font-size:1.5em;padding:2px 0 2px 0;border-bottom:1px solid #aaa;background:#fff;color:#006}.searchDiv[_ngcontent-c37]{position:absolute;top:3px;right:1px;width:50%}.searchBtn[_ngcontent-c37]{float:right;z-index:10;top:2px;right:4px;width:15px;height:100%;position:absolute}.searchInputTxt[_ngcontent-c37]{position:relative;padding-left:3px;padding-bottom:2px;width:100%;float:right;-webkit-border-radius:3px;-moz-border-radius:3px;border:1px solid #ddd}</style><style>.ps{overflow:hidden!important;overflow-anchor:none;-ms-overflow-style:none;touch-action:auto;-ms-touch-action:auto}.ps__rail-x{display:none;opacity:0;transition:background-color .2s linear,opacity .2s linear;-webkit-transition:background-color .2s linear,opacity .2s linear;height:15px;bottom:0;position:absolute}.ps__rail-y{display:none;opacity:0;transition:background-color .2s linear,opacity .2s linear;-webkit-transition:background-color .2s linear,opacity .2s linear;width:15px;right:0;position:absolute}.ps--active-x>.ps__rail-x,.ps--active-y>.ps__rail-y{display:block;background-color:transparent}.ps--focus>.ps__rail-x,.ps--focus>.ps__rail-y,.ps--scrolling-x>.ps__rail-x,.ps--scrolling-y>.ps__rail-y,.ps:hover>.ps__rail-x,.ps:hover>.ps__rail-y{opacity:.6}.ps__rail-x:focus,.ps__rail-x:hover,.ps__rail-y:focus,.ps__rail-y:hover{background-color:#eee;opacity:.9}.ps__thumb-x{background-color:#aaa;border-radius:6px;transition:background-color .2s linear,height .2s ease-in-out;-webkit-transition:background-color .2s linear,height .2s ease-in-out;height:6px;bottom:2px;position:absolute}.ps__thumb-y{background-color:#aaa;border-radius:6px;transition:background-color .2s linear,width .2s ease-in-out;-webkit-transition:background-color .2s linear,width .2s ease-in-out;width:6px;right:2px;position:absolute}.ps__rail-x:focus>.ps__thumb-x,.ps__rail-x:hover>.ps__thumb-x{background-color:#999;height:11px}.ps__rail-y:focus>.ps__thumb-y,.ps__rail-y:hover>.ps__thumb-y{background-color:#999;width:11px}@supports (-ms-overflow-style:none){.ps{overflow:auto!important}}@media screen and (-ms-high-contrast:active),(-ms-high-contrast:none){.ps{overflow:auto!important}}perfect-scrollbar{position:relative;display:block;overflow:hidden;width:100%;height:100%;max-width:100%;max-height:100%}perfect-scrollbar[hidden]{display:none}perfect-scrollbar[fxflex]{display:flex;flex-direction:column;-webkit-box-orient:column;-webkit-box-direction:column;height:auto;min-width:0;min-height:0}perfect-scrollbar[fxflex]>.ps{flex:1 1 auto;-ms-flex:1 1 auto;-webkit-box-flex:1;width:auto;height:auto;min-width:0;min-height:0}perfect-scrollbar[fxlayout]>.ps,perfect-scrollbar[fxlayout]>.ps>.ps-content{display:flex;flex:1 1 auto;-ms-flex:1 1 auto;-webkit-box-flex:1;align-item:inherit;place-content:inherit;-webkit-box-pack:inherit;-webkit-box-align:inherit;flex-direction:inherit;-webkit-box-orient:inherit;-webkit-box-direction:inherit;width:100%;height:100%}perfect-scrollbar[fxlayout=row]>.ps,perfect-scrollbar[fxlayout=row]>.ps>.ps-content{flex-direction:row!important;-webkit-box-orient:row!important;-webkit-box-direction:row!important}perfect-scrollbar[fxlayout=column]>.ps,perfect-scrollbar[fxlayout=column]>.ps>.ps-content{flex-direction:column!important;-webkit-box-orient:column!important;-webkit-box-direction:column!important}perfect-scrollbar>.ps{position:static;display:block;width:inherit;height:inherit;max-width:inherit;max-height:inherit}perfect-scrollbar>.ps>.ps-overlay{position:absolute;top:0;right:0;bottom:0;left:0;display:block;overflow:hidden;pointer-events:none}perfect-scrollbar>.ps>.ps-overlay .ps-indicator-bottom,perfect-scrollbar>.ps>.ps-overlay .ps-indicator-left,perfect-scrollbar>.ps>.ps-overlay .ps-indicator-right,perfect-scrollbar>.ps>.ps-overlay .ps-indicator-top{position:absolute;opacity:0;transition:opacity .3s ease-in-out}perfect-scrollbar>.ps>.ps-overlay .ps-indicator-bottom,perfect-scrollbar>.ps>.ps-overlay .ps-indicator-top{left:0;min-width:100%;min-height:24px}perfect-scrollbar>.ps>.ps-overlay .ps-indicator-left,perfect-scrollbar>.ps>.ps-overlay .ps-indicator-right{top:0;min-width:24px;min-height:100%}perfect-scrollbar>.ps>.ps-overlay .ps-indicator-top{top:0}perfect-scrollbar>.ps>.ps-overlay .ps-indicator-left{left:0}perfect-scrollbar>.ps>.ps-overlay .ps-indicator-right{right:0}perfect-scrollbar>.ps>.ps-overlay .ps-indicator-bottom{bottom:0}perfect-scrollbar>.ps.ps--active-y>.ps__rail-y{top:0!important;right:0!important;left:auto!important;width:10px;cursor:default;transition:width .2s linear,opacity .2s linear,background-color .2s linear}perfect-scrollbar>.ps.ps--active-y>.ps__rail-y:hover{width:15px}perfect-scrollbar>.ps.ps--active-x>.ps__rail-x{top:auto!important;bottom:0!important;left:0!important;height:10px;cursor:default;transition:height .2s linear,opacity .2s linear,background-color .2s linear}perfect-scrollbar>.ps.ps--active-x>.ps__rail-x:hover{height:15px}perfect-scrollbar>.ps.ps--active-x.ps--active-y>.ps__rail-y{margin:0 0 10px}perfect-scrollbar>.ps.ps--active-x.ps--active-y>.ps__rail-x{margin:0 10px 0 0}perfect-scrollbar>.ps.ps--scrolling-y>.ps__rail-y{opacity:.9;background-color:#eee}perfect-scrollbar>.ps.ps--scrolling-x>.ps__rail-x{opacity:.9;background-color:#eee}perfect-scrollbar.ps-show-always>.ps.ps--active-y>.ps__rail-y{opacity:.6}perfect-scrollbar.ps-show-always>.ps.ps--active-x>.ps__rail-x{opacity:.6}perfect-scrollbar.ps-show-active>.ps.ps--active-y>.ps-overlay:not(.ps-at-top) .ps-indicator-top{opacity:1;background:linear-gradient(to bottom,rgba(255,255,255,.5) 0,rgba(255,255,255,0) 100%)}perfect-scrollbar.ps-show-active>.ps.ps--active-y>.ps-overlay:not(.ps-at-bottom) .ps-indicator-bottom{opacity:1;background:linear-gradient(to top,rgba(255,255,255,.5) 0,rgba(255,255,255,0) 100%)}perfect-scrollbar.ps-show-active>.ps.ps--active-x>.ps-overlay:not(.ps-at-left) .ps-indicator-left{opacity:1;background:linear-gradient(to right,rgba(255,255,255,.5) 0,rgba(255,255,255,0) 100%)}perfect-scrollbar.ps-show-active>.ps.ps--active-x>.ps-overlay:not(.ps-at-right) .ps-indicator-right{opacity:1;background:linear-gradient(to left,rgba(255,255,255,.5) 0,rgba(255,255,255,0) 100%)}perfect-scrollbar.ps-show-active.ps-show-limits>.ps.ps--active-y>.ps-overlay.ps-at-top .ps-indicator-top{background:linear-gradient(to bottom,rgba(170,170,170,.5) 0,rgba(170,170,170,0) 100%)}perfect-scrollbar.ps-show-active.ps-show-limits>.ps.ps--active-y>.ps-overlay.ps-at-top .ps-indicator-top.ps-indicator-show{opacity:1}perfect-scrollbar.ps-show-active.ps-show-limits>.ps.ps--active-y>.ps-overlay.ps-at-bottom .ps-indicator-bottom{background:linear-gradient(to top,rgba(170,170,170,.5) 0,rgba(170,170,170,0) 100%)}perfect-scrollbar.ps-show-active.ps-show-limits>.ps.ps--active-y>.ps-overlay.ps-at-bottom .ps-indicator-bottom.ps-indicator-show{opacity:1}perfect-scrollbar.ps-show-active.ps-show-limits>.ps.ps--active-x>.ps-overlay.ps-at-left .ps-indicator-left{background:linear-gradient(to right,rgba(170,170,170,.5) 0,rgba(170,170,170,0) 100%)}perfect-scrollbar.ps-show-active.ps-show-limits>.ps.ps--active-x>.ps-overlay.ps-at-left .ps-indicator-left.ps-indicator-show{opacity:1}perfect-scrollbar.ps-show-active.ps-show-limits>.ps.ps--active-x>.ps-overlay.ps-at-right .ps-indicator-right{background:linear-gradient(to left,rgba(170,170,170,.5) 0,rgba(170,170,170,0) 100%)}perfect-scrollbar.ps-show-active.ps-show-limits>.ps.ps--active-x>.ps-overlay.ps-at-right .ps-indicator-right.ps-indicator-show{opacity:1}</style><style>.view-auction-list-body[_ngcontent-c39]   table[_ngcontent-c39]{table-layout:fixed;border-collapse:collapse;font-size:.95em;width:100%}button.bid[_ngcontent-c39]{background-color:#005abb}.DR[_ngcontent-c39]{color:#212529!important;background-color:#e6c927!important;border-color:#e6c927!important;border:1px solid #e6c927!important}.CT[_ngcontent-c39], .DR[_ngcontent-c39]{font-weight:700}.CT[_ngcontent-c39]{background-color:#f50002!important;border-color:#ee2727!important}.table[_ngcontent-c39]   td[_ngcontent-c39]{padding:0;border:0}button.bid[_ngcontent-c39]{font-size:1.2em;margin:0;margin-top:2px;margin-right:1px;border:0;padding:5px;color:#fff;min-width:145px;height:23px;border-top-left-radius:5px;-moz-border-radius-topleft:5px;-webkit-border-top-left-radius:5px;border-top-right-radius:5px;-moz-border-radius-topright:5px;-webkit-border-top-right-radius:5px;border-bottom-left-radius:5px;-moz-border-radius-bottomleft:5px;-webkit-border-bottom-left-radius:5px;border-bottom-right-radius:5px;-moz-border-radius-bottomright:5px;-webkit-border-bottom-right-radius:5px;line-height:1}.yardName-MICRO[_ngcontent-c39]{max-width:100px!important}.yardName-MACRO[_ngcontent-c39]{max-width:400px!important}.yardName-MOBILE[_ngcontent-c39]{max-width:100px!important}.highlights-MACRO[_ngcontent-c39], .highlights-MEGA[_ngcontent-c39]{width:480px}.highlights-MACRO[_ngcontent-c39], .highlights-MEGA[_ngcontent-c39], .highlights-MICRO[_ngcontent-c39]{min-height:15px;overflow:hidden;text-overflow:ellipsis}.highlights-MICRO[_ngcontent-c39]{width:180px}.highlights-MOBILE[_ngcontent-c39]{min-height:15px;width:480px;overflow:hidden;text-overflow:ellipsis}</style><meta http-equiv="origin-trial" content="AlK2UR5SkAlj8jjdEc9p3F3xuFYlF6LYjAML3EOqw1g26eCwWPjdmecULvBH5MVPoqKYrOfPhYVL71xAXI1IBQoAAAB8eyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="Amm8/NmvvQfhwCib6I7ZsmUxiSCfOxWxHayJwyU1r3gRIItzr7bNQid6O8ZYaE1GSQTa69WwhPC9flq/oYkRBwsAAACCeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="A9wSqI5i0iwGdf6L1CERNdmsTPgVu44ewj8QxTBYgsv1LCPUVF7YmWOvTappqB1139jAymxUW/RO8zmMqo4zlAAAAACNeyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiRmxlZGdlQmlkZGluZ0FuZEF1Y3Rpb25TZXJ2ZXIiLCJleHBpcnkiOjE3MzY4MTI4MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A+d7vJfYtay4OUbdtRPZA3y7bKQLsxaMEPmxgfhBGqKXNrdkCQeJlUwqa6EBbSfjwFtJWTrWIioXeMW+y8bWAgQAAACTeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiRmxlZGdlQmlkZGluZ0FuZEF1Y3Rpb25TZXJ2ZXIiLCJleHBpcnkiOjE3MzY4MTI4MDAsImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><script src="https://securepubads.g.doubleclick.net/pagead/managed/js/gpt/m202507100101/pubads_impl.js" async=""></script><link href="https://securepubads.g.doubleclick.net/pagead/managed/dict/m202507150101/gpt" rel="compression-dictionary"></head>
+
+    <body>
+        <div style="display:none;" id="serverName">frpdac104.corp.copart.de</div>
+        <div id="iAuction5-internal"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0"><title>Auction Dashboard</title><base href="."><!-- Load JS/CSS dependencies --><title>Auctions Dashboard</title><link href="lib/font-opensans/css/open-sans.css" rel="stylesheet"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/x-icon" href="favicon.ico"><link href="styles.50b855c01026c95172a3.bundle.css" rel="stylesheet"><root ng-version="5.0.1"><router-outlet></router-outlet><app-root _nghost-c0=""><div _ngcontent-c0="" class="component-container" style="height:100%;">
+    <!---->
+    <!---->
+    <!----><widget-area _ngcontent-c0="" _nghost-c2="" class="ng-star-inserted"><div _ngcontent-c2="" class="overlay_fix" id="overlay_id" style="display: none;">
+</div>
+<div _ngcontent-c2="" style="width:100%; height:100%;">
+    <!---->
+
+    <!----><div _ngcontent-c2="" class="container-fluid ng-star-inserted" style="font-size: 12px;">
+        <ul _ngcontent-c2="" class="list-group-horizontal topbreadcrumb p-0" style="margin-bottom: 0px;">
+            <li _ngcontent-c2="" class="list-group-item">Вид аукциона :</li>
+            <!----><li _ngcontent-c2="" class="list-group-item ng-star-inserted">
+                <span _ngcontent-c2="" data-uname="showMicroView" class="nav-option-on">Маленький	</span>
+                <span _ngcontent-c2="" class="ico">|</span></li>
+            <!----><li _ngcontent-c2="" class="list-group-item ng-star-inserted">
+                <span _ngcontent-c2="" class="largebtn nav-option-on" data-uname="showMacroView">Большой	</span>
+                <span _ngcontent-c2="" class="ico">|</span>
+            </li>
+
+
+            <!----><li _ngcontent-c2="" class="list-group-item ng-star-inserted">
+                <span _ngcontent-c2="" class="largebtn" data-uname="showMegaView">Full</span>
+                <span _ngcontent-c2="" class="ico">|</span>
+            </li>
+            <li _ngcontent-c2="" class="list-group-item"><span _ngcontent-c2="" class="nav-option-on addauctionbtn" data-uname="addAuction">+ Добавить аукцион</span>
+                <span _ngcontent-c2="" class="ico">|</span>
+            </li>
+
+            <!----><li _ngcontent-c2="" class="list-group-item ng-star-inserted">
+                <!----><span _ngcontent-c2="" class="nav-option-on classicviewbtn ng-star-inserted" data-uname="showClassicView">Классический вид</span>
+                <!---->
+                <span _ngcontent-c2="" class="ico">|</span>
+            </li>
+            <li _ngcontent-c2="" class="list-group-item">
+                <span _ngcontent-c2="" class="nav-option-on musiconbtn">Вкл. музыку</span>
+                <span _ngcontent-c2="" class="material-icons md-18 align-middle nav-option-on" data-uname="muteBkgAudio">volume_up</span>
+                <span _ngcontent-c2="" class="ico">|</span>
+            </li>
+            <li _ngcontent-c2="" class="list-group-item" hidden="">
+                <span _ngcontent-c2="" class="nav-option-on musiconbtn">Выкл. музыку</span>
+                <span _ngcontent-c2="" class="material-icons md-18 align-middle nav-option-on" data-uname="unMuteBkgAudio">volume_mute</span>
+                <span _ngcontent-c2="" class="ico">|</span>
+            </li>
+
+            <li _ngcontent-c2="" class="list-group-item">
+                <span _ngcontent-c2="" class="nav-option-on">Конфетти вкл</span>
+                <span _ngcontent-c2="" class="ico">|</span>
+            </li>
+            <li _ngcontent-c2="" class="list-group-item" hidden="">
+                <span _ngcontent-c2="" class="nav-option-on">Конфетти выкл</span>
+                <span _ngcontent-c2="" class="ico">|</span>
+            </li>
+
+            <!---->
+            <!---->
+            <!---->
+            <!----><li _ngcontent-c2="" class="list-group-item ng-star-inserted">
+                <span _ngcontent-c2="" class="nav-option-on recommendationsBtn" data-uname="showSwitchFeedBack"></span>
+                <!---->
+            </li>
+            <!---->
+            <!---->
+        </ul>
+    </div>
+
+    <div _ngcontent-c2="" class="row" style="padding: 0px; width: 100%; margin: 0px;">
+        <div _ngcontent-c2="" class="col-sm-12">
+            <gridster _ngcontent-c2="" id="gridsterComp" style="background: white !important; overflow: initial !important;" _nghost-c4="" class="fixed"><gridster-grid _ngcontent-c4="" class="gridster-grid" _nghost-c13="" style="display: none;"><div _ngcontent-c13="" class="columns" style="height: 2550px;">   <!----><div _ngcontent-c13="" class="column ng-star-inserted" style="min-width: 1376.11px; margin-left: 10px;"></div> </div> <div _ngcontent-c13="" class="rows" style="width: 1386.11px;">   <!----><div _ngcontent-c13="" class="row ng-star-inserted" style="height: 500px; margin-top: 10px;"></div><div _ngcontent-c13="" class="row ng-star-inserted" style="height: 500px; margin-top: 10px;"></div><div _ngcontent-c13="" class="row ng-star-inserted" style="height: 500px; margin-top: 10px;"></div><div _ngcontent-c13="" class="row ng-star-inserted" style="height: 500px; margin-top: 10px;"></div><div _ngcontent-c13="" class="row ng-star-inserted" style="height: 500px; margin-top: 10px;"></div> </div></gridster-grid>
+                <!----><gridster-item _ngcontent-c2="" _nghost-c5="" data-index="0" class="ng-star-inserted" style="display: block; top: 0px; left: 0px; width: 1376.11px; height: 500px; margin: 10px;">
+                    <widget _ngcontent-c2="" _nghost-c6="">
+<!---->
+
+<!---->
+
+<div _ngcontent-c6="">
+    <!---->
+    <div _ngcontent-c6="" class="widget widget-MEGA widget-list-MEGA ng-star-inserted">
+
+        <widget-header-list _ngcontent-c6="" _nghost-c34=""><section _ngcontent-c34="" class="widget-header">
+    <div _ngcontent-c34="" class="widgetheader-left">
+        <div _ngcontent-c34="" class="view-header-title">Аукционы сегодня (2)</div>
+    </div>
+    <!---->
+</section></widget-header-list>
+
+        <div _ngcontent-c6="" class="widget-body widget-body-MEGA">
+            <auction-list-area _ngcontent-c6="" _nghost-c35="" class="auction-list-area-MEGA">
+<table _ngcontent-c35="" class="view-auction-list-header">
+    <tbody _ngcontent-c35="">
+    <tr _ngcontent-c35="">
+        <td _ngcontent-c35="" style="width:90px;">
+            <div _ngcontent-c35="">Время	</div>
+        </td>
+        <td _ngcontent-c35="" style="width:100%;">
+            <div _ngcontent-c35="">Название продажи</div>
+        </td>
+        <td _ngcontent-c35="" style="width:105px;">
+            <div _ngcontent-c35="">Очередь	</div>
+        </td>
+        <td _ngcontent-c35="" style="width:20px;">
+            <lane-highlight-tooltip _ngcontent-c35="" _nghost-c36=""><div _ngcontent-c36="">
+    <span _ngcontent-c36="" class="tooltip-icon">?</span>
+</div>
+
+<p-overlaypanel _ngcontent-c36="" appendto="body" class="ng-tns-c38-2">
+
+    </p-overlaypanel>
+</lane-highlight-tooltip>
+        </td>
+    </tr>
+</tbody></table>
+
+
+
+
+<auction-list _ngcontent-c35="" class="auction-list" _nghost-c37=""><div _ngcontent-c37="" class="view-auction-list-body ps-scrolldiv">
+    <perfect-scrollbar _ngcontent-c37=""><div style="position: static;" class="ps"><div class="ps-content">
+        <div _ngcontent-c37="" style="position: relative;">
+            <table _ngcontent-c37="" class="arAuctiontable">
+                <tbody _ngcontent-c37="">
+                <tr _ngcontent-c37="">
+
+                    <td _ngcontent-c37="" style="width:90px;height:0;"></td>
+                    <td _ngcontent-c37="" style="width:100%;height:0;"></td>
+                    <td _ngcontent-c37="" style="width:150px;height:0;"></td>
+                    <td _ngcontent-c37="" style="width:20px;height:0;"></td>
+                </tr>
+                </tbody>
+                <tbody _ngcontent-c37="">
+                <tr _ngcontent-c37="">
+                    <td _ngcontent-c37="" colspan="4">
+                        <div _ngcontent-c37="" class="view-auction-list-title"><strong _ngcontent-c37="">Активный</strong>   Аукционы"
+                        </div>
+                        <div _ngcontent-c37="" class="searchDiv">
+                            <span _ngcontent-c37="" class="searchBtn"><i _ngcontent-c37="" class="fa fa-search"></i></span>
+                            <input _ngcontent-c37="" class="searchInputTxt" id="SearchInputText" type="text" placeholder="Лот №, VIN, Объект №/название">
+                        </div>
+
+                    </td>
+                </tr>
+
+
+                <!----><tr _ngcontent-c37="" class="liveAuction ng-star-inserted" style="border-bottom:1px solid #DDD;" id="COPARTDE119185A" title="Deutschlandweite Mittwoch-Auktion - 119185">
+                    <td _ngcontent-c37="" colspan="4">
+                        <live-auction-row _ngcontent-c37="" _nghost-c39=""><div _ngcontent-c39="" class="table-responsive">
+    <div _ngcontent-c39="">
+        <div _ngcontent-c39="" style="display:table; width:100%">
+            <div _ngcontent-c39="" style="float:left; max-width:94px; padding-right:30px; white-space:nowrap; text-overflow:ellipsis;">
+                <div _ngcontent-c39="">
+                    <strong _ngcontent-c39="">14:00
+                        <span _ngcontent-c39="" class="gray">CEST</span>
+                    </strong>
+                </div>
+                <div _ngcontent-c39="">
+                    <span _ngcontent-c39="" class="gray" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis; max-width: 80px;" title=""></span>
+                </div>
+                <div _ngcontent-c39="" class="highlights-MEGA">
+                    <span _ngcontent-c39="" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis; max-width: 80px;" title=""></span>
+                </div>
+            </div>
+            <div _ngcontent-c39="" style="float:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" class="yardName-MEGA" title="Deutschlandweite Mittwoch-Auktion - 119185A">
+                Deutschlandweite Mittwoch-Auktion
+            </div>
+            <button _ngcontent-c39="" style="min-width: 50px; float:right;margin-right: 12px;" type="button" class="bid COPARTDE">
+                Присоединиться
+            </button>
+            <div _ngcontent-c39="" style="float:right; padding-right:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;width:63px; ">
+                <div _ngcontent-c39="">
+                    <strong _ngcontent-c39="">Очередь	 A</strong>
+                </div>
+                <div _ngcontent-c39="">
+                    <strong _ngcontent-c39="">154 лота	</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</live-auction-row>
+                    </td>
+                </tr><tr _ngcontent-c37="" class="liveAuction ng-star-inserted" style="border-bottom:1px solid #DDD;" id="COPARTDE119185B" title="Deutschlandweite Mittwoch-Auktion - 119185">
+                    <td _ngcontent-c37="" colspan="4">
+                        <live-auction-row _ngcontent-c37="" _nghost-c39=""><div _ngcontent-c39="" class="table-responsive">
+    <div _ngcontent-c39="">
+        <div _ngcontent-c39="" style="display:table; width:100%">
+            <div _ngcontent-c39="" style="float:left; max-width:94px; padding-right:30px; white-space:nowrap; text-overflow:ellipsis;">
+                <div _ngcontent-c39="">
+                    <strong _ngcontent-c39="">14:00
+                        <span _ngcontent-c39="" class="gray">CEST</span>
+                    </strong>
+                </div>
+                <div _ngcontent-c39="">
+                    <span _ngcontent-c39="" class="gray" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis; max-width: 80px;" title=""></span>
+                </div>
+                <div _ngcontent-c39="" class="highlights-MEGA">
+                    <span _ngcontent-c39="" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis; max-width: 80px;" title=""></span>
+                </div>
+            </div>
+            <div _ngcontent-c39="" style="float:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" class="yardName-MEGA" title="Deutschlandweite Mittwoch-Auktion - 119185B">
+                Deutschlandweite Mittwoch-Auktion
+            </div>
+            <button _ngcontent-c39="" style="min-width: 50px; float:right;margin-right: 12px;" type="button" class="bid COPARTDE">
+                Присоединиться
+            </button>
+            <div _ngcontent-c39="" style="float:right; padding-right:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;width:63px; ">
+                <div _ngcontent-c39="">
+                    <strong _ngcontent-c39="">Очередь	 B</strong>
+                </div>
+                <div _ngcontent-c39="">
+                    <strong _ngcontent-c39="">160 лота	</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</live-auction-row>
+                    </td>
+                </tr>
+                <!---->
+
+                <tr _ngcontent-c37="">
+                    <td _ngcontent-c37="" colspan="4">
+                        <div _ngcontent-c37="" class="view-auction-list-title"><strong _ngcontent-c37="">Сегодня позже</strong>   Аукционы" </div>
+                    </td>
+                </tr>
+
+
+                <!---->
+
+                <!----><tr _ngcontent-c37="" class="noUpcomingAuction ng-star-inserted">
+                    <td _ngcontent-c37="" colspan="4">
+                        <div _ngcontent-c37="">Нет предстоящих аукционов	</div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div><!----><div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div></div></perfect-scrollbar>
+</div>
+</auction-list>
+</auction-list-area>
+        </div>
+    </div>
+
+</div>
+</widget>
+                 <div _ngcontent-c5="" class="gridster-item-resizable-handler handle-s" hidden=""></div> <div _ngcontent-c5="" class="gridster-item-resizable-handler handle-e" hidden=""></div> <div _ngcontent-c5="" class="gridster-item-resizable-handler handle-n" hidden=""></div> <div _ngcontent-c5="" class="gridster-item-resizable-handler handle-w" hidden=""></div> <div _ngcontent-c5="" class="gridster-item-resizable-handler handle-se" hidden=""></div> <div _ngcontent-c5="" class="gridster-item-resizable-handler handle-ne" hidden=""></div> <div _ngcontent-c5="" class="gridster-item-resizable-handler handle-sw" hidden=""></div> <div _ngcontent-c5="" class="gridster-item-resizable-handler handle-nw" hidden=""></div></gridster-item>
+             <gridster-preview _ngcontent-c4="" class="gridster-preview" _nghost-c14=""></gridster-preview></gridster>
+        </div>
+    </div>
+</div>
+
+
+<!---->
+
+<!---->
+
+<!---->
+
+
+<!---->
+
+
+<p-dialog _ngcontent-c2="" class="ng-tns-c7-0">
+        <div class="ng-tns-c7-0 ui-dialog ui-widget ui-widget-content ui-corner-all ui-shadow ui-dialog-draggable ng-trigger ng-trigger-dialogState" role="dialog" aria-labelledby="ui-dialog-0-label" style="max-width: 40%; display: none; min-width: 150px; min-height: 150px; opacity: 0;">
+            <!----><div class="ui-dialog-titlebar ui-widget-header ui-helper-clearfix ui-corner-top ng-tns-c7-0 ng-star-inserted" style="">
+                <!----><span class="ui-dialog-title ng-tns-c7-0 ng-star-inserted" id="ui-dialog-0-label">Обновить учетную запись</span>
+                <!---->
+                <!----><a href="#" role="button" class="ng-tns-c7-0 ui-dialog-titlebar-icon ui-dialog-titlebar-close ui-corner-all ng-star-inserted">
+                    <span class="fa fa-fw fa-close"></span>
+                </a>
+            </div>
+            <div class="ui-dialog-content ui-widget-content" style="overflow: visible; padding: 0px;">
+
+    <div _ngcontent-c2="" style="margin: 20px">
+        <span _ngcontent-c2="" class="ui-confirmdialog-message">
+            Для участия в нескольких продажах необходимо иметь учетную запись класса Премьер. Обновить учетную запись сейчас?
+        </span>
+    </div>
+
+
+            </div>
+            <!----><div class="ui-dialog-footer ui-widget-content ng-tns-c7-0 ng-star-inserted" style="">
+                <p-footer _ngcontent-c2="">
+        <button _ngcontent-c2="" class="btn btn-sm" label="No" type="button">Отмена
+        </button>
+        <button _ngcontent-c2="" class="btn btn-primary btn-sm" label="Yes" type="button">
+            Обновить учетную запись
+        </button>
+    </p-footer>
+            </div>
+            <!----><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se ng-tns-c7-0 ng-star-inserted" style="z-index: 90;"></div>
+        </div>
+    </p-dialog>
+
+<signin-register-widget _ngcontent-c2="" _nghost-c12="">
+<p-dialog _ngcontent-c12="" styleclass="mobile_view membership_signin_modalpopup" class="ng-tns-c7-1">
+        <div class="ng-tns-c7-1 mobile_view membership_signin_modalpopup ui-dialog ui-widget ui-widget-content ui-corner-all ui-shadow ui-dialog-draggable ng-trigger ng-trigger-dialogState" role="dialog" aria-labelledby="ui-dialog-1-label" style="display: none; min-width: 150px; min-height: 150px; opacity: 0;">
+            <!----><div class="ui-dialog-titlebar ui-widget-header ui-helper-clearfix ui-corner-top ng-tns-c7-1 ng-star-inserted" style="">
+                <!----><span class="ui-dialog-title ng-tns-c7-1 ng-star-inserted" id="ui-dialog-1-label">Приобрести план участия</span>
+                <!---->
+                <!----><a href="#" role="button" class="ng-tns-c7-1 ui-dialog-titlebar-icon ui-dialog-titlebar-close ui-corner-all ng-star-inserted">
+                    <span class="fa fa-fw fa-close"></span>
+                </a>
+            </div>
+            <div class="ui-dialog-content ui-widget-content" style="overflow: visible; padding: 0px;">
+
+    <!----><div _ngcontent-c12="" style="margin: 15px 20px;" class="ng-star-inserted">
+        Пожалуйста, обновите свой план участия, чтобы просматривать аукционы
+    </div>
+    <!---->
+
+
+            </div>
+            <!----><div class="ui-dialog-footer ui-widget-content ng-tns-c7-1 ng-star-inserted" style="">
+                <p-footer _ngcontent-c12="">
+
+        <!----><button _ngcontent-c12="" class="btn btn-primary btn-sm sign-in-button ng-star-inserted" type="button">
+            Обновление
+        </button>
+
+        <!---->
+        <!---->
+    </p-footer>
+            </div>
+            <!----><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se ng-tns-c7-1 ng-star-inserted" style="z-index: 90;"></div>
+        </div>
+    </p-dialog>
+</signin-register-widget>
+</widget-area>
+
+    <!---->
+</div>
+</app-root></root><script type="text/javascript" src="inline.60dd42fd54020f984073.bundle.js"></script><script type="text/javascript" src="scripts.1a60ace7a478dc805284.bundle.js"></script><script type="text/javascript" src="main.b95998872616aa70e4a0.bundle.js"></script></div>
+
+
+<span id="_Nirvana_Driver_DOM_Objects_Container" style="display: none;"></span><script src="https://www.googletagservices.com/tag/js/gpt.js?key=AIzaSyC09H6k_QN5Sb_MsvWfp7rNlnxDJ8cUXcQ"></script><div class="ng-tns-c38-2 ui-overlaypanel ui-widget ui-widget-content ui-corner-all ui-shadow ng-trigger ng-trigger-panelState" style="border: 4px solid rgb(204, 204, 204); margin-left: 18px; pointer-events: none; display: none; opacity: 0;">
+            <div class="ui-overlaypanel-content">
+
+    <div _ngcontent-c36="" class="view-auction-list-tooltip" style="font-family: Roboto,serif;">
+        <div _ngcontent-c36="" id="toolTipContainer">
+            <div _ngcontent-c36="" id="toolTipContainerArrow"></div>
+            <div _ngcontent-c36="">
+                <h4 _ngcontent-c36="" style=" font-size: 16px; font-weight: bold"></h4>
+                <div _ngcontent-c36="" style="font-size:11px;"></div>
+                <div _ngcontent-c36="" class="table-responsive">
+                    <table _ngcontent-c36="" class="table table-striped">
+                        <tbody _ngcontent-c36="">
+                        <tr _ngcontent-c36="" class="toolTipContentTableHeader" style="text-align:center;">
+                            <td _ngcontent-c36=""></td>
+                            <td _ngcontent-c36=""></td>
+                            <td _ngcontent-c36=""></td>
+                        </tr>
+                        </tbody>
+                        <tbody _ngcontent-c36="" class="toolTipContentTableBody" style="text-align:center;">
+                        <!---->
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+            </div>
+            <!---->
+        </div>
+<script type="text/javascript" id="" charset="">!function(b,e,f,g,a,c,d){b.fbq||(a=b.fbq=function(){a.callMethod?a.callMethod.apply(a,arguments):a.queue.push(arguments)},b._fbq||(b._fbq=a),a.push=a,a.loaded=!0,a.version="2.0",a.queue=[],c=e.createElement(f),c.async=!0,c.src=g,d=e.getElementsByTagName(f)[0],d.parentNode.insertBefore(c,d))}(window,document,"script","https://connect.facebook.net/en_US/fbevents.js");fbq("init","755229991333034");fbq("track","PageView");</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=755229991333034&amp;ev=PageView&amp;noscript=1"></noscript>
+<script id="" text="" charset="" type="text/javascript" src="https://www.insightful-7-corporation.com/js/804165.js"></script> <iframe height="0" width="0" style="display: none; visibility: hidden;"></iframe><noscript><img alt="" src="https://www.insightful-7-corporation.com/804165.png" style="display:none;"></noscript></body></html>

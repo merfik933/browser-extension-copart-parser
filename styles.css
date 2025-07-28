@@ -1,0 +1,47 @@
+body {
+    background-color: #151515;
+    color: #fff;
+    margin: 0;
+    padding: 10px;
+    font-family: sans-serif;
+    min-width: 120px;
+}
+
+.popup-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.icon-button img {
+    width: 100px;
+    height: 100px;
+}
+
+h2, h3 {
+    margin-top: 0;
+}
+
+section {
+    border: 1px solid #444;
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.field-row {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 5px;
+}
+.field-row input, .field-row select {
+    flex: 1;
+}
