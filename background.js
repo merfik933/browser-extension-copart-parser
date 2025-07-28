@@ -129,12 +129,12 @@ async function parsing() {
             // Проверка текущей ставки и ID лота
             textElementsChecker(tabId, [settings.currentBidSelector, settings.currentLotIdSelector], "bid-checker", settings.bidInterval);
 
-            linkElementsChecker(tabId, settings.lotsListSelector, i);
+            // linkElementsChecker(tabId, settings.lotsListSelector, i);
 
             // Сбор данных о лотах
-            console.log(`Сбор данных о лотах для аукциона ${i + 1}...`);
-            await getAllLotsData(tabId, windowId, i);
-            console.log(`Сбор данных о лотах для аукциона ${i + 1} завершен`);
+            // console.log(`Сбор данных о лотах для аукциона ${i + 1}...`);
+            // await getAllLotsData(tabId, windowId, i);
+            // console.log(`Сбор данных о лотах для аукциона ${i + 1} завершен`);
         })());
     }
     await Promise.all(promises);
