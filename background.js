@@ -1,11 +1,9 @@
-import { waitFor, clickOn, getAllLotUrlsBySelector, textElementsChecker } from './content_utils.js';
+import { waitFor, clickOn, textElementsChecker } from './content_utils.js';
 
 let isRunning = false;
 
 let dataJSON = {};
 let settings = {};
-
-let urls = [{},{}]
 
 loadSettings().then(() => {
     console.log("Настройки загружены", settings);
@@ -13,27 +11,20 @@ loadSettings().then(() => {
 async function loadSettings() {
     return new Promise((resolve) => {
         chrome.storage.sync.get([
-            "lotMinDelay", "lotMaxDelay", "bidInterval", "lotInterval", "testMode",
-            "currentBidSelector", "currentLotIdSelector", "lotsListSelector"
+            "bidInterval", "testMode",
+            "currentBidSelector", "currentLotIdSelector"
         ], (data) => {
-            settings.lotMinDelay = Number(data.lotMinDelay) || 4000;
-            settings.lotMaxDelay = Number(data.lotMaxDelay) || 10000;
             settings.bidInterval = Number(data.bidInterval) || 1000;
-            settings.lotInterval = Number(data.lotInterval) || 5000;
             settings.testMode = data.testMode || false;
 
             settings.currentBidSelector = data.currentBidSelector || "circle + text";
             settings.currentLotIdSelector = data.currentLotIdSelector || ".itempair a[data-uname='lot-details-value']";
-            settings.lotsListSelector = data.lotsListSelector || ".showExpandedDetails span + a, .itempair a[data-uname='lot-details-value']";
 
             chrome.storage.sync.set({
-                lotMinDelay: settings.lotMinDelay,
-                lotMaxDelay: settings.lotMaxDelay,
                 bidInterval: settings.bidInterval,
                 testMode: settings.testMode,
                 currentBidSelector: settings.currentBidSelector,
                 currentLotIdSelector: settings.currentLotIdSelector,
-                lotsListSelector: settings.lotsListSelector,
             });
         });
     });
@@ -117,7 +108,6 @@ async function parsing() {
             console.log(`Открытие вкладки с аукционами...`);
             const result = await gotoAuctionsListPage();
             const tabId = result.tabId;
-            const windowId = result.windowId;
 
             console.log(`Вкладка с аукционами открыта: ${tabId}`);
 
@@ -128,34 +118,9 @@ async function parsing() {
 
             // Проверка текущей ставки и ID лота
             textElementsChecker(tabId, [settings.currentBidSelector, settings.currentLotIdSelector], "bid-checker", settings.bidInterval);
-
-            // linkElementsChecker(tabId, settings.lotsListSelector, i);
-
-            // Сбор данных о лотах
-            // console.log(`Сбор данных о лотах для аукциона ${i + 1}...`);
-            // await getAllLotsData(tabId, windowId, i);
-            // console.log(`Сбор данных о лотах для аукциона ${i + 1} завершен`);
         })());
     }
     await Promise.all(promises);
-}
-
-async function linkElementsChecker(tabId, selector, lotId) {
-    while (true) {
-        try {
-            let new_urls = await getAllLotUrlsBySelector(tabId, selector);
-            console.log("Найденные ссылки на лоты:", new_urls);
-            for (const [text, href] of Object.entries(new_urls)) {
-                if (!urls[lotId][text]) {
-                    urls[lotId][text] = href;
-                }
-            }
-        } catch (error) {
-            console.error("Ошибка при получении ссылок на лоты:", error);
-        }
-
-        await sleep(settings.lotInterval);
-    }
 }
 
 async function gotoAuctionsListPage() {
@@ -230,106 +195,4 @@ async function clickToActionPage(auctionId, tabId) {
             console.error(`Ошибка при переходе к аукциону ${auctionId}: ${error}`);
         }
     }
-}
-
-async function getAllLotsData(tabId, windowId, lotId) {
-    if (settings.testMode) {
-        console.log("Тестовый режим: Использование тестовых ссылок");
-        urls = [
-            {
-                "50526308": "https://www.copart.de/lot/50526308"
-            },
-            {
-                "50526308": "https://www.copart.de/lot/50526308"
-            }
-        ];
-        for (const [text, href] of Object.entries(urls[lotId])) {
-            console.log(`Сбор данных для лота: ${text} (${href})`);
-            await collectLotDataFromLink(href, windowId);
-        }
-    } else {
-        while (true) {
-            for (const [text, href] of Object.entries(urls[lotId])) {
-                const trimmedHref = href.trim();
-                const trimmedText = text.trim();
-
-                if (dataJSON[trimmedText] && dataJSON[trimmedText].title) {
-                    console.log(`Уже есть данные для: ${trimmedText}`);
-                    continue;
-                }
-
-                console.log(`Сбор данных для лота: ${trimmedText} (${trimmedHref})`);
-                await collectLotDataFromLink(trimmedHref, windowId);
-            }
-
-            console.log(`Пауза ${settings.lotInterval} мс перед новой итерацией`);
-            await sleep(settings.lotInterval);
-        }
-    }
-}
-
-function getRandomDelay(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function collectLotDataFromLink(link, windowId) {
-    return new Promise((resolve) => {
-        chrome.tabs.create({ url: link, windowId: windowId, active: false }, (tab) => {
-            const tabId = tab.id;
-
-            chrome.tabs.onUpdated.addListener(function listener(updatedTabId, info) {
-                if (updatedTabId === tabId && info.status === "complete") {
-                    chrome.tabs.onUpdated.removeListener(listener);
-                    console.log("Страница лота загружена:", link);
-
-                    const handleLotData = function(message, sender) {
-                        if (sender.tab.id !== tabId) return;
-
-                        if (message.action === "lot-data") {
-                            console.log("Получены данные лота:", message.data);
-                            const lotNumber = message.data.number;
-                            if (!dataJSON[lotNumber]) {
-                                dataJSON[lotNumber] = {};
-                            }
-                            Object.assign(dataJSON[lotNumber], message.data);
-                            chrome.runtime.onMessage.removeListener(handleLotData);
-                            chrome.tabs.remove(tabId);
-                            resolve();
-                        }
-
-                        if (message.action === "lot-data-error") {
-                            console.error("Ошибка сбора:", message.error);
-                            chrome.runtime.onMessage.removeListener(handleLotData);
-                            chrome.tabs.remove(tabId);
-                            resolve();
-                        }
-                    };
-
-                    chrome.runtime.onMessage.addListener(handleLotData);
-
-                    (async () => {
-                    const pause = getRandomDelay(settings.lotMinDelay, settings.lotMaxDelay);
-
-                        // await chrome.tabs.update(tabId, { active: true });
-                        await sleep(pause);
-                        // await chrome.tabs.update(mainTabId, { active: true });
-
-                        await chrome.scripting.executeScript({
-                            target: { tabId },
-                            files: ["libs/jszip.min.js"]
-                        });
-                        await chrome.scripting.executeScript({
-                            target: { tabId },
-                            files: ["content_lot.js"]
-                        });
-                    })();
-                }
-                });
-
-        });
-    });
 }
